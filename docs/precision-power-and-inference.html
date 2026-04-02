@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Precision, power, and inference | TAPS - some learning</title>
+  <meta name="description" content="Chapter 3 Precision, power, and inference | TAPS - some learning" />
+  <meta name="generator" content="bookdown 0.46 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Precision, power, and inference | TAPS - some learning" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Precision, power, and inference | TAPS - some learning" />
+  
+  
+  
+
+<meta name="author" content="" />
+
+
+<meta name="date" content="2026-04-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="why-do-we-need-designed-experiments.html"/>
+<link rel="next" href="optimal-designs.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">SHORT TITLE HERE</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="overview.html"><a href="overview.html"><i class="fa fa-check"></i><b>1</b> Overview</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="overview.html"><a href="overview.html#some-review-of-math-and-notation"><i class="fa fa-check"></i><b>1.1</b> Some review of math and notation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="why-do-we-need-designed-experiments.html"><a href="why-do-we-need-designed-experiments.html"><i class="fa fa-check"></i><b>2</b> Why do we need designed experiments?</a></li>
+<li class="chapter" data-level="3" data-path="precision-power-and-inference.html"><a href="precision-power-and-inference.html"><i class="fa fa-check"></i><b>3</b> Precision, power, and inference</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="precision-power-and-inference.html"><a href="precision-power-and-inference.html#inference"><i class="fa fa-check"></i><b>3.1</b> Inference</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="precision-power-and-inference.html"><a href="precision-power-and-inference.html#precision"><i class="fa fa-check"></i><b>3.1.1</b> Precision</a></li>
+<li class="chapter" data-level="3.1.2" data-path="precision-power-and-inference.html"><a href="precision-power-and-inference.html#power"><i class="fa fa-check"></i><b>3.1.2</b> Power</a></li>
+<li class="chapter" data-level="3.1.3" data-path="precision-power-and-inference.html"><a href="precision-power-and-inference.html#blocks"><i class="fa fa-check"></i><b>3.1.3</b> Blocks</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="optimal-designs.html"><a href="optimal-designs.html"><i class="fa fa-check"></i><b>4</b> Optimal designs</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="optimal-designs.html"><a href="optimal-designs.html#some-optimality-criteria-with-emphasis-on-estimation"><i class="fa fa-check"></i><b>4.1</b> Some optimality criteria with emphasis on estimation</a></li>
+<li class="chapter" data-level="4.2" data-path="optimal-designs.html"><a href="optimal-designs.html#other-interesting-optimality-criteria-with-emphasis-on-prediction"><i class="fa fa-check"></i><b>4.2</b> Other interesting optimality criteria with emphasis on prediction</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html"><i class="fa fa-check"></i><b>5</b> TAPS designed experiments</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html#in-rounds"><i class="fa fa-check"></i><b>5.1</b> In rounds:</a></li>
+<li class="chapter" data-level="5.2" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html#what-is-special-about-taps-designs"><i class="fa fa-check"></i><b>5.2</b> What is special about TAPS designs?</a></li>
+<li class="chapter" data-level="5.3" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html#an-applied-example"><i class="fa fa-check"></i><b>5.3</b> An applied example</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html#camparing-designs-side-by-side"><i class="fa fa-check"></i><b>5.3.1</b> Camparing designs side by side</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="taps-designed-experiments.html"><a href="taps-designed-experiments.html#planning-colby-2026"><i class="fa fa-check"></i><b>5.4</b> Planning Colby 2026</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">TAPS - some learning</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="precision-power-and-inference" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Precision, power, and inference<a href="precision-power-and-inference.html#precision-power-and-inference" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The most common model we use can be generally described as</p>
+<p><span class="math display">\[y_{i} \sim N(\mu_i, \sigma^2),\]</span>
+where <span class="math inline">\(y_{i}\)</span> is the <span class="math inline">\(i\)</span>th observation with expected value <span class="math inline">\(\mu_i\)</span> and variance <span class="math inline">\(\sigma^2\)</span>. Generally speaking, we can say <span class="math inline">\(\boldsymbol\mu = \mathbf{X} \boldsymbol{\beta}\)</span>, where <span class="math inline">\(\mathbf{X}\)</span> is the design matrix (i.e., contains info on all treatments, etc) and <span class="math inline">\(\boldsymbol{\beta}\)</span> is a vector containing all parameters.</p>
+<p>The assumptions we make are</p>
+<ul>
+<li>normality,</li>
+<li>independence,</li>
+<li>constant variance.</li>
+</ul>
+<p>A few properties arise as a consequence:</p>
+<ul>
+<li><span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is an unbiased estimator of <span class="math inline">\(\boldsymbol{\beta}\)</span></li>
+<li><span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is also the unbiased estimator with the smallest variance.</li>
+<li>Precision of the estimates: <span class="math inline">\(Var(\hat{\boldsymbol{\beta}}) = \frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}\)</span></li>
+<li>Standard error of the estimates: <span class="math inline">\(se(\hat{\boldsymbol{\beta}}) = \sqrt{\frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}}\)</span></li>
+<li>Also, looking directly at treatment means <span class="math inline">\(\mu_j\)</span>: <span class="math inline">\(se(\hat{\mu_j}) =\sqrt\frac{\sigma^2}{r}\)</span>, where <span class="math inline">\(r\)</span> is the number of repetitions.</li>
+<li>Variance of <span class="math inline">\(\hat{y}\)</span>: <span class="math inline">\(Var(\hat{y}) = \sigma^2 \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top\)</span><br />
+</li>
+<li>See ‘Review’ above to understand what <span class="math inline">\(\mathbf{X}^\top \mathbf{X}\)</span> does.</li>
+</ul>
+<div id="inference" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Inference<a href="precision-power-and-inference.html#inference" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>What in the model were we interested about?</li>
+<li>A confidence interval of <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span>: <span class="math inline">\(CI_{95\%\ \hat{\boldsymbol{\beta}}} = \hat{\boldsymbol{\beta}} \pm t_{1-\alpha/2, df} \cdot se(\hat{\boldsymbol{\beta}})\)</span></li>
+<li>What is the most accurate confidence interval?</li>
+<li>What is the best confidence interval?</li>
+</ul>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<img src="figures/mindmap2.jpg" alt="Mindmap: experiment design and data analysis in the context of a research question." width="90%" />
+<p class="caption">
+Figure 3.1: Mindmap: experiment design and data analysis in the context of a research question.
+</p>
+</div>
+<div id="precision" class="section level3 hasAnchor" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Precision<a href="precision-power-and-inference.html#precision" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We wish to maximize the information about the estimates: this means having a narrow range of values where we have high confidence contain the true value.</p>
+<p>Recall:</p>
+<p><span class="math display">\[CI_{95\%\ \hat{\beta_j}} = \hat{\beta_j} \pm t_{1-\alpha/2, df} \cdot se(\hat{\beta_j}).\]</span></p>
+<p><strong>What happens when we increase the number of observations:</strong></p>
+<ul>
+<li><span class="math inline">\(t_{1-\alpha/2,\ df_1} \rightarrow t_{1-\alpha/2,\ df_2}\)</span></li>
+<li><span class="math inline">\(se(\hat{\beta_j}) = \sqrt{\frac{\sigma^2}{(\mathbf{X}^\top \mathbf{X})^{-1}_{jj}}} = \sqrt{\frac{\sigma^2}{n\cdot s^2_x}}\)</span></li>
+<li>Discuss increasing <span class="math inline">\(r\)</span> versus increasing <span class="math inline">\(J\)</span> (i.e., total number of treatments).</li>
+</ul>
+</div>
+<div id="power" class="section level3 hasAnchor" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Power<a href="precision-power-and-inference.html#power" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ul>
+<li>Statistical power is directly connected to hypothesis tests.</li>
+<li>Hypothesis tests are directly connected to the standard error of the estimates.</li>
+</ul>
+<p><strong>Strategies to increase power</strong></p>
+<p>Elements of ANOVA</p>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+ANOVA table for the cookie split-plot experiment.
+</title>
+<style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<table>
+<tr>
+<th>
+Source
+</th>
+<th>
+df
+</th>
+<th>
+SS
+</th>
+<th>
+MS
+</th>
+<th>
+EMS
+</th>
+</tr>
+<tr>
+<td>
+Block
+</td>
+<td>
+<span class="math inline">\(b-1\)</span>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}+g\sigma^2_w+tg\sigma^2_d\]</span>
+</td>
+</tr>
+<tr>
+<td>
+Fungicide
+</td>
+<td>
+<span class="math inline">\(t-1\)</span>
+</td>
+<td>
+<span class="math inline">\(SS_{F}\)</span>
+</td>
+<td>
+<span class="math inline">\(\frac{SS_{F}}{b-1}\)</span>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}+g\sigma^2_w+\phi^2(\alpha)\]</span>
+</td>
+</tr>
+<tr>
+<td>
+Error(whole plot)
+</td>
+<td>
+<span class="math inline">\((b-1)(t-1)\)</span>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}+g\sigma^2_w\]</span>
+</td>
+</tr>
+<tr>
+<td>
+Genotype
+</td>
+<td>
+<span class="math inline">\(g-1\)</span>
+</td>
+<td>
+<span class="math inline">\(SS_{G}\)</span>
+</td>
+<td>
+<span class="math inline">\(\frac{SS_{G}}{g-1}\)</span>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}+\phi^2(\gamma)\]</span>
+</td>
+</tr>
+<tr>
+<td>
+<span class="math inline">\(T \times G\)</span>
+</td>
+<td>
+<span class="math inline">\((t-1)(g-1)\)</span>
+</td>
+<td>
+<span class="math inline">\(SS_{F \times G}\)</span>
+</td>
+<td>
+<span class="math inline">\(\frac{SS_{F \times G}}{(t-1)(g-1)}\)</span>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}+\phi^2(\alpha \gamma)\]</span>
+</td>
+</tr>
+<tr>
+<td>
+Error(split plot)
+</td>
+<td>
+<span class="math inline">\(t(b-1)(g-1)\)</span>
+</td>
+<td>
+<span class="math inline">\(SSE\)</span>
+</td>
+<td>
+<span class="math inline">\(\frac{SSE}{t(b-1)(g-1)}\)</span>
+</td>
+<td>
+<span class="math display">\[\sigma^2_{\varepsilon}\]</span>
+</td>
+</tr>
+</table>
+</body>
+<table>
+<caption><span id="tab:unnamed-chunk-3">Table 3.1: </span>Baseline: Low #reps (3), Low #trts (3)</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Df</th>
+<th align="right">Sum Sq</th>
+<th align="right">Mean Sq</th>
+<th align="right">F value</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment</td>
+<td align="right">2</td>
+<td align="right">17.28135</td>
+<td align="right">8.640673</td>
+<td align="right">1.872832</td>
+<td align="right">0.2333563</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">6</td>
+<td align="right">27.68217</td>
+<td align="right">4.613695</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-3">Table 3.1: </span>Baseline: More #reps (6), Low #trts (3)</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Df</th>
+<th align="right">Sum Sq</th>
+<th align="right">Mean Sq</th>
+<th align="right">F value</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment</td>
+<td align="right">2</td>
+<td align="right">87.55746</td>
+<td align="right">43.778731</td>
+<td align="right">8.26395</td>
+<td align="right">0.0028439</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">18</td>
+<td align="right">95.35599</td>
+<td align="right">5.297555</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-3">Table 3.1: </span>Baseline: Low #reps (3), More #trts (6)</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Df</th>
+<th align="right">Sum Sq</th>
+<th align="right">Mean Sq</th>
+<th align="right">F value</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment</td>
+<td align="right">6</td>
+<td align="right">72.17677</td>
+<td align="right">12.02946</td>
+<td align="right">2.955068</td>
+<td align="right">0.0444459</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">14</td>
+<td align="right">56.99106</td>
+<td align="right">4.07079</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="blocks" class="section level3 hasAnchor" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> Blocks<a href="precision-power-and-inference.html#blocks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Blocks (or local control) are included to increase precision –&gt; increase power.</p>
+<ul>
+<li>How are blocks applied nowadays?</li>
+<li>What does ‘convenience blocking’ generate? See <a href="https://link.springer.com/article/10.1198/108571102780">Stroup (2002)</a>.</li>
+</ul>
+<p><strong>Incomplete Block Designs</strong></p>
+<ul>
+<li>More likely to recover spatial variability because they’re smaller.</li>
+<li><code>ibd</code> R package [<a href="https://cran.r-project.org/web/packages/ibd/index.html">link</a>]</li>
+</ul>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="why-do-we-need-designed-experiments.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="optimal-designs.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/edit/main/01-review.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/blob/main/01-review.Rmd",
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
