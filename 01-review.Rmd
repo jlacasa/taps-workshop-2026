@@ -287,6 +287,69 @@ Optimality criteria summarize how good a design is in a single number. Optimal d
 **I-optimality** 
 - Minimizes the average prediction variance over the design region. 
 
+## Response surface designs 
+
+- Continuous predictors 
+- What about replications??
+- How does a design look like?
+
+```{r echo=FALSE}
+# Install the plotly package if you don't already have it
+# install.packages("plotly")
+
+library(plotly)
+
+# 1. Define alpha for a 3-factor rotatable design
+# The formula for rotatability is (2^k)^(1/4). For k=3, it's 2^(3/4) ≈ 1.682
+alpha <- 1.682
+
+# 2. Generate Cube points (+/- 1 for all factors)
+cube <- expand.grid(X1 = c(-1, 1), X2 = c(-1, 1), X3 = c(-1, 1))
+cube$Type <- "Cube Point"
+
+# 3. Generate Axial (Star) points (+/- alpha on one axis, 0 on others)
+axial <- data.frame(
+  X1 = c(-alpha, alpha, 0, 0, 0, 0),
+  X2 = c(0, 0, -alpha, alpha, 0, 0),
+  X3 = c(0, 0, 0, 0, -alpha, alpha)
+)
+axial$Type <- "Axial Point"
+
+# 4. Generate Center point (0, 0, 0)
+# Note: In practice, center points are usually replicated (e.g., 6 times), 
+# but one is sufficient for visualization purposes.
+center <- data.frame(X1 = 0, X2 = 0, X3 = 0, Type = "Center Point")
+
+# 5. Combine all points into a single data frame
+ccd_data <- rbind(cube, axial, center)
+
+# 6. Create the interactive 3D plot
+fig <- plot_ly(ccd_data, 
+               x = ~X1, y = ~X2, z = ~X3,
+               color = ~Type, 
+               colors = c("red", "blue", "green"), # Custom colors for the 3 types
+               type = "scatter3d", 
+               mode = "markers",
+               marker = list(size = 8, 
+                             line = list(width = 1, color = 'black'),
+                             opacity = 0.9))
+
+# 7. Add formatting and axis labels
+fig <- fig %>% layout(
+  title = "3D Central Composite Design (CCD)",
+  scene = list(
+    xaxis = list(title = "Factor 1 (X1)", range = c(-2, 2)),
+    yaxis = list(title = "Factor 2 (X2)", range = c(-2, 2)),
+    zaxis = list(title = "Factor 3 (X3)", range = c(-2, 2)),
+    camera = list(eye = list(x = 1.5, y = 1.5, z = 1.5)) # Sets default viewing angle
+  )
+)
+
+# Display the plot
+fig
+```
+
+
 ## TAPS designed experiments
 
 Designed experiments in TAPS are typically arranged in a randomized complete block design (RCBD). 

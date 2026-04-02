@@ -52,6 +52,14 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="libs/plotly-binding-4.12.0/plotly.js"></script>
+<script src="libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+<link href="libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
 <script src="libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
@@ -100,9 +108,10 @@
 <li class="chapter" data-level="2.4.1" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#some-optimality-criteria-with-emphasis-on-estimation"><i class="fa fa-check"></i><b>2.4.1</b> Some optimality criteria with emphasis on estimation</a></li>
 <li class="chapter" data-level="2.4.2" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#other-interesting-optimality-criteria-with-emphasis-on-prediction"><i class="fa fa-check"></i><b>2.4.2</b> Other interesting optimality criteria with emphasis on prediction</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#taps-designed-experiments"><i class="fa fa-check"></i><b>2.5</b> TAPS designed experiments</a>
+<li class="chapter" data-level="2.5" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#response-surface-designs"><i class="fa fa-check"></i><b>2.5</b> Response surface designs</a></li>
+<li class="chapter" data-level="2.6" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#taps-designed-experiments"><i class="fa fa-check"></i><b>2.6</b> TAPS designed experiments</a>
 <ul>
-<li class="chapter" data-level="2.5.1" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#in-rounds"><i class="fa fa-check"></i><b>2.5.1</b> In rounds:</a></li>
+<li class="chapter" data-level="2.6.1" data-path="welcome-to-the-design-of-experiments-workshop.html"><a href="welcome-to-the-design-of-experiments-workshop.html#in-rounds"><i class="fa fa-check"></i><b>2.6.1</b> In rounds:</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="taps---some-learning.html"><a href="taps---some-learning.html"><i class="fa fa-check"></i><b>3</b> TAPS - some learning</a>
@@ -180,7 +189,7 @@ The result is a square matrix where the number of rows and columns equals the nu
 <ul>
 <li>Golden rules: replication, randomization, local control</li>
 </ul>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
 <img src="figures/fisher_diagram.jpg" alt="Fisher's diagram 'The Principles of Field Experimentation'. Figure 1 in [Preece (1990)](https://doi.org/10.2307/2532438)." width="60%" />
 <p class="caption">
 Figure 2.1: Fisher’s diagram ‘The Principles of Field Experimentation’. Figure 1 in <a href="https://doi.org/10.2307/2532438">Preece (1990)</a>.
@@ -222,7 +231,7 @@ where <span class="math inline">\(y_{i}\)</span> is the <span class="math inline
 <li>What is the most accurate confidence interval?</li>
 <li>What is the best confidence interval?</li>
 </ul>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
 <img src="figures/mindmap2.jpg" alt="Mindmap: experiment design and data analysis in the context of a research question." width="90%" />
 <p class="caption">
 Figure 2.2: Mindmap: experiment design and data analysis in the context of a research question.
@@ -395,7 +404,7 @@ Error(split plot)
 </table>
 </body>
 <table>
-<caption><span id="tab:unnamed-chunk-4">Table 2.1: </span>Baseline: Low #reps (3), Low #trts (3)</caption>
+<caption><span id="tab:unnamed-chunk-7">Table 2.1: </span>Baseline: Low #reps (3), Low #trts (3)</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -426,7 +435,7 @@ Error(split plot)
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-5">Table 2.2: </span>Baseline: More #reps (6), Low #trts (3)</caption>
+<caption><span id="tab:unnamed-chunk-8">Table 2.2: </span>Baseline: More #reps (6), Low #trts (3)</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -457,7 +466,7 @@ Error(split plot)
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-6">Table 2.3: </span>Baseline: Low #reps (3), More #trts (6)</caption>
+<caption><span id="tab:unnamed-chunk-9">Table 2.3: </span>Baseline: Low #reps (3), More #trts (6)</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -530,24 +539,34 @@ Error(split plot)
 - Minimizes the average prediction variance over the design region.</p>
 </div>
 </div>
-<div id="taps-designed-experiments" class="section level2 hasAnchor" number="2.5">
-<h2><span class="header-section-number">2.5</span> TAPS designed experiments<a href="welcome-to-the-design-of-experiments-workshop.html#taps-designed-experiments" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="response-surface-designs" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Response surface designs<a href="welcome-to-the-design-of-experiments-workshop.html#response-surface-designs" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Continuous predictors</li>
+<li>What about replications??</li>
+<li>How does a design look like?</li>
+</ul>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-471cb6a5008ccd84c836" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-471cb6a5008ccd84c836">{"x":{"visdat":{"2f64310d1dbe":["function () ","plotlyVisDat"]},"cur_data":"2f64310d1dbe","attrs":{"2f64310d1dbe":{"x":{},"y":{},"z":{},"mode":"markers","marker":{"size":8,"line":{"width":1,"color":"black"},"opacity":0.90000000000000002},"color":{},"colors":["red","blue","green"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"3D Central Composite Design (CCD)","scene":{"xaxis":{"title":"Factor 1 (X1)","range":[-2,2]},"yaxis":{"title":"Factor 2 (X2)","range":[-2,2]},"zaxis":{"title":"Factor 3 (X3)","range":[-2,2]},"camera":{"eye":{"x":1.5,"y":1.5,"z":1.5}}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-1.6819999999999999,1.6819999999999999,0,0,0,0],"y":[0,0,-1.6819999999999999,1.6819999999999999,0,0],"z":[0,0,0,0,-1.6819999999999999,1.6819999999999999],"mode":"markers","marker":{"color":"rgba(255,0,0,1)","size":8,"line":{"color":"black","width":1},"opacity":0.90000000000000002},"type":"scatter3d","name":"Axial Point","textfont":{"color":"rgba(255,0,0,1)"},"error_y":{"color":"rgba(255,0,0,1)"},"error_x":{"color":"rgba(255,0,0,1)"},"line":{"color":"rgba(255,0,0,1)"},"frame":null},{"x":[0],"y":[0],"z":[0],"mode":"markers","marker":{"color":"rgba(0,0,255,1)","size":8,"line":{"color":"black","width":1},"opacity":0.90000000000000002},"type":"scatter3d","name":"Center Point","textfont":{"color":"rgba(0,0,255,1)"},"error_y":{"color":"rgba(0,0,255,1)"},"error_x":{"color":"rgba(0,0,255,1)"},"line":{"color":"rgba(0,0,255,1)"},"frame":null},{"x":[-1,1,-1,1,-1,1,-1,1],"y":[-1,-1,1,1,-1,-1,1,1],"z":[-1,-1,-1,-1,1,1,1,1],"mode":"markers","marker":{"color":"rgba(0,255,0,1)","size":8,"line":{"color":"black","width":1},"opacity":0.90000000000000002},"type":"scatter3d","name":"Cube Point","textfont":{"color":"rgba(0,255,0,1)"},"error_y":{"color":"rgba(0,255,0,1)"},"error_x":{"color":"rgba(0,255,0,1)"},"line":{"color":"rgba(0,255,0,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="taps-designed-experiments" class="section level2 hasAnchor" number="2.6">
+<h2><span class="header-section-number">2.6</span> TAPS designed experiments<a href="welcome-to-the-design-of-experiments-workshop.html#taps-designed-experiments" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Designed experiments in TAPS are typically arranged in a randomized complete block design (RCBD).</p>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
 <img src="figures/designs_rcbd.PNG" alt="Schematic representation of a randomized complete block design." width="60%" />
 <p class="caption">
 Figure 2.3: Schematic representation of a randomized complete block design.
 </p>
 </div>
 <p>Some TAPS designed experiments are arranged in a split-plot design.</p>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
 <img src="figures/designs_splitplot.PNG" alt="Schematic representation of a split-plot design randomized complete block arrangement." width="60%" />
 <p class="caption">
 Figure 2.4: Schematic representation of a split-plot design randomized complete block arrangement.
 </p>
 </div>
-<div id="in-rounds" class="section level3 hasAnchor" number="2.5.1">
-<h3><span class="header-section-number">2.5.1</span> In rounds:<a href="welcome-to-the-design-of-experiments-workshop.html#in-rounds" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="in-rounds" class="section level3 hasAnchor" number="2.6.1">
+<h3><span class="header-section-number">2.6.1</span> In rounds:<a href="welcome-to-the-design-of-experiments-workshop.html#in-rounds" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <ul>
 <li>What is one benefit we get from TAPS designs?</li>
 <li>What are the treaments in TAPS experiments?</li>

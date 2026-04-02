@@ -88,91 +88,143 @@ $$se(\hat\beta_j) = \sqrt{(\frac{1}{\sigma^2_t} r\mathbf{X}_{teams}^\top \mathbf
 
 ### Comparing designs side by side
 
-
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
+#| fig.width: 10
+#| fig.height: 8
 
 library(numDeriv)
-library(kableExtra)
+library(mgcv)
+library(ggplot2)
 
 # 1. Setup Design Parameters
 sigma_teams <- 60
 sigma_extra <- 30
-beta_true <- c(150, 20, 15, -8, -10, 3) 
 
-# Simulate 24 random team decisions for N and Irr
+# UPDATED: True betas adjusted for raw agronomic units 
+# so the optimum occurs near N=190, Irr=8
+# Order: Intercept, N, Irr, N2, Irr2, N_Irr
+beta_true <- c(0, 3.8, 32, -0.01, -2.0, 0.05) 
+
+# Simulate 24 collinear team decisions in RAW units
 set.seed(42)
 n_teams <- 24
-
-# Var(Irr) = 5, Var(N) = 1000. 
-# Max possible covariance is sqrt(5 * 1000) = 70.7. 
-# We use 50 to simulate a strong positive correlation (r ~ 0.7)
 covar_irr_N <- 50 
-
 team_decisions <- mgcv::rmvn(n_teams, 
-                             mu = c(8, 190), # Means: Irr = 8, N = 190
+                             mu = c(8, 190), 
                              V = matrix(c(5, covar_irr_N, 
                                           covar_irr_N, 1000),
                                         nrow = 2, ncol = 2, byrow = TRUE))
 
-# Scale the raw agronomic decisions to [-1, 1] design space
-# This ensures mathematical compatibility with the CCD and assumed betas
-scale_to_design <- function(x) {
-  2 * ((x - min(x)) / (max(x) - min(x))) - 1
+# Use raw units directly (No scaling)
+X_team_base <- data.frame(
+  Intercept = 1,
+  N = team_decisions[, 2],  
+  Irr = team_decisions[, 1] 
+)
+
+# Add quadratic and interaction terms
+X_team_base$N2 <- X_team_base$N^2
+X_team_base$Irr2 <- X_team_base$Irr^2
+X_team_base$N_Irr <- X_team_base$N * X_team_base$Irr
+
+# 2. Calculate the New Centroid for Extra Plots
+# Shifting: -1 SD for N, +1 SD for Irrigation
+center_N <- mean(X_team_base$N) - 0.5*sd(X_team_base$N)
+center_Irr <- mean(X_team_base$Irr) + sd(X_team_base$Irr)
+
+# 3. Dynamic Generator for Extra Plots (CCD or Grid)
+generate_extra <- function(n_extra) {
+  if (n_extra == 0) return(NULL)
+  
+  if (n_extra <= 12) {
+    # 9-Point CCD centered at the new centroid, scaled by raw SD
+    step_N <- sd(X_team_base$N)
+    step_Irr <- sd(X_team_base$Irr)
+    
+    ccd_N <- center_N + c(-1, 1, -1, 1, -1.414, 1.414, 0, 0, 0, 0, 0) * step_N
+    ccd_Irr <- center_Irr + c(-1, -1, 1, 1, 0, 0, -1.414, 1.414, 0, 0, 0) * step_Irr
+    
+    if (n_extra > 9) {
+      ccd_N <- c(ccd_N, rep(center_N, n_extra - 9))
+      ccd_Irr <- c(ccd_Irr, rep(center_Irr, n_extra - 9))
+    }
+    extra_df <- data.frame(N = ccd_N[1:n_extra], Irr = ccd_Irr[1:n_extra])
+    
+  } else {
+    # Grid surrounding the new centroid in raw units
+    
+    n_grid <- n_extra - 9
+    
+    # 2. Build the base grid with the remaining plots
+    n_cols <- floor(sqrt(n_grid))
+    n_rows <- ceiling(n_grid / n_cols)
+    
+    seq_N <- seq(center_N - sd(X_team_base$N)*1.5, 
+                 center_N + sd(X_team_base$N)*1.5, length.out = n_cols)
+    seq_Irr <- seq(center_Irr - sd(X_team_base$Irr)*1.5, 
+                   center_Irr + sd(X_team_base$Irr)*1.5, length.out = n_rows)
+    
+    grid <- expand.grid(N = seq_N, Irr = seq_Irr)
+    grid <- grid[1:n_grid, ] # Trim to exact base grid size
+    
+    # 3. Find the 9 center-most points using Euclidean distance
+    # (Requires the dplyr package to be loaded)
+    center_9_points <- grid |> 
+      mutate(dist_to_center = sqrt(((N - center_N) / sd(X_team_base$N))^2 + 
+                                   ((Irr - center_Irr) / sd(X_team_base$Irr))^2)) |> 
+      arrange(dist_to_center) |> 
+      slice_head(n = 9) |> 
+      select(N, Irr)
+    # Drop the distance column so it binds cleanly
+    
+    # 4. Combine the base grid with the 9 replicated center points
+    extra_df <- rbind(grid, center_9_points)
+     
+  }
+  
+  extra_df$Intercept <- 1
+  extra_df$N2 <- extra_df$N^2
+  extra_df$Irr2 <- extra_df$Irr^2
+  extra_df$N_Irr <- extra_df$N * extra_df$Irr
+  
+  return(extra_df[, c("Intercept", "N", "Irr", "N2", "Irr2", "N_Irr")])
 }
 
-X_team_base <- cbind(
-  Intercept = 1,
-  N = scale_to_design(team_decisions[, 2]),  
-  Irr = scale_to_design(team_decisions[, 1]) 
-)
-
-# Add quadratic and interaction terms based on the scaled decisions
-X_team_base <- cbind(X_team_base, 
-                     N2 = X_team_base[,"N"]^2, 
-                     Irr2 = X_team_base[,"Irr"]^2, 
-                     N_Irr = X_team_base[,"N"] * X_team_base[,"Irr"])
-
-# 2. Setup the Central Composite Design (CCD) base
-ccd_N <- c(-1, 1, -1, 1, -1.414, 1.414, 0, 0, 0)
-ccd_Irr <- c(-1, -1, 1, 1, 0, 0, -1.414, 1.414, 0)
-
-X_ccd_base <- cbind(
-  Intercept = 1,
-  N = ccd_N,
-  Irr = ccd_Irr,
-  N2 = ccd_N^2,
-  Irr2 = ccd_Irr^2,
-  N_Irr = ccd_N * ccd_Irr
-)
-
+# 4. Evaluation Function
 calc_optimum <- function(betas) {
   b <- c(betas[2], betas[3]) 
   B <- matrix(c(betas[4], 0.5 * betas[6],  
-                0.5 * betas[6], betas[5]), 
-              nrow = 2)
+                0.5 * betas[6], betas[5]), nrow = 2)
   opt <- -0.5 * solve(B) %*% b
   return(as.vector(opt))
 }
 
-# 3. Create a function to evaluate the variance of the designs
-evaluate_design <- function(reps, n_extra) {
-  X_teams <- do.call(rbind, replicate(reps, X_team_base, simplify = FALSE))
-  Info_teams <- crossprod(X_teams) / (sigma_teams^2)
+evaluate_design <- function(reps, n_extra, opt_name) {
+  X_teams_mat <- as.matrix(X_team_base)
+  X_teams_full <- do.call(rbind, replicate(reps, X_teams_mat, simplify = FALSE))
+  Info_teams <- crossprod(X_teams_full) / (sigma_teams^2)
   
-  # Conditionally handle the extra plots to avoid breaking when n_extra = 0
+  df_plot <- data.frame(N = X_team_base$N, Irr = X_team_base$Irr, 
+                        Type = "Team Decision")
+  
   if (n_extra > 0) {
-    reps_ccd <- ceiling(n_extra / nrow(X_ccd_base))
-    X_extra <- do.call(rbind, replicate(reps_ccd, X_ccd_base, simplify = FALSE))[1:n_extra, ]
-    Info_extra <- crossprod(X_extra) / (sigma_extra^2)
+    X_extra_df <- generate_extra(n_extra)
+    Info_extra <- crossprod(as.matrix(X_extra_df)) / (sigma_extra^2)
+    
+    type_label <- ifelse(n_extra <= 12, "Extra (CCD)", "Extra (Grid)")
+    df_plot <- rbind(df_plot, data.frame(N = X_extra_df$N, 
+                                         Irr = X_extra_df$Irr, 
+                                         Type = type_label))
   } else {
-    Info_extra <- matrix(0, nrow = ncol(X_team_base), ncol = ncol(X_team_base))
+    Info_extra <- matrix(0, nrow = 6, ncol = 6)
   }
   
-  se_team <- sigma_teams / sqrt(reps)
+  df_plot$Option <- opt_name
   
+  se_team <- sigma_teams / sqrt(reps)
   var_betas <- solve(Info_teams + Info_extra)
   se_betas <- sqrt(diag(var_betas))
   
@@ -180,46 +232,56 @@ evaluate_design <- function(reps, n_extra) {
   var_opt <- J %*% var_betas %*% t(J)
   se_opt <- sqrt(diag(var_opt))
   
-  return(c(reps, n_extra, se_team, se_betas, se_opt))
+  metrics <- c(reps, n_extra, se_team, se_betas, se_opt)
+  return(list(metrics = metrics, plot_data = df_plot))
 }
 
-# 4. Compile and transpose the results
-results <- rbind(
-  "Option 1" = evaluate_design(reps = 4, n_extra = 0),
-  "Option 2" = evaluate_design(reps = 4, n_extra = 12),
-  "Option 3" = evaluate_design(reps = 3, n_extra = 36),
-  "Option 4" = evaluate_design(reps = 2, n_extra = 60)
-)
+# 5. Compile Results
+opt1 <- evaluate_design(4,  0, "Option 1 (4 Reps, 0 Extra)")
+opt2 <- evaluate_design(4, 12, "Option 2 (4 Reps, 12 CCD)")
+opt3 <- evaluate_design(3, 36, "Option 3 (3 Reps, 36 Grid)")
+opt4 <- evaluate_design(2, 60, "Option 4 (2 Reps, 60 Grid)")
+
+results <- rbind(opt1$metrics, opt2$metrics, opt3$metrics, opt4$metrics)
+rownames(results) <- c("Option 1", "Option 2", "Option 3", "Option 4")
 
 col_names <- c("# reps", "Extra plots", "SE(trt mean)", "SE(Intercept)", 
                "SE(N)", "SE(Irr)", "SE(N^2)", "SE(Irr^2)", "SE(NxIrr)", 
                "SE(OPT N)", "SE(OPT Irr)")
 
-colnames(results) <- col_names
-
-results <- results |>
-  as.data.frame() |> 
-  mutate(across(`SE(trt mean)`:`SE(OPT Irr)`, ~round(., 1)))
-
 knitr::kable(round(results, 3), 
              col.names = col_names,
-             align = rep("c", 11),
-             caption = "Comprehensive Evaluation of Standard Errors Across Design Options")|>
+             align = "cccc",
+             caption = "Evaluation of Standard Errors (Raw Agronomic Units)")|>
   kable_styling(latex_options = "scale_down", bootstrap_options = c("striped", "hover")) |>
   scroll_box(width = "100%")
 ```
 
+```{r}
+#| echo: false
+#| fig.cap: "Design spaces in raw units. Collinear team behavior is shown alongside the extra treatments offset to map unexplored regions."
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-results |> 
-  rownames_to_column("design") |>
-  pivot_longer(cols = c(`SE(trt mean)`:`SE(OPT Irr)`)) |> 
-  ggplot(aes(name, value))+
-  geom_point(aes(fill = factor(design)), shape =21, shape =3)+
-  theme_classic()+
-  labs(fill = "Design")+
-  scico::scale_fill_scico_d()+
-  theme(aspect.ratio = .4)
+# Combine plotting data
+all_plots <- rbind(opt1$plot_data, opt2$plot_data, opt3$plot_data, opt4$plot_data)
+
+# Ensure consistent factor ordering
+all_plots$Type <- factor(all_plots$Type, 
+                         levels = c("Team Decision", "Extra (CCD)", "Extra (Grid)"))
+
+ggplot(all_plots, aes(x = Irr, y = N, color = Type, shape = Type)) +
+  geom_point(size = 3, alpha = 0.5) +
+  facet_wrap(~ Option) +
+  scale_color_manual(values = c("Team Decision" = "#1b9e77", 
+                                "Extra (CCD)" = "#d95f02", 
+                                "Extra (Grid)" = "#7570b3")) +
+  labs(title = "Design Space Footprint: Nitrogen vs. Irrigation",
+       subtitle = "Displaying true agronomic units with offset experimental centroids",
+       y = "Nitrogen Applied (lbs/ac)",
+       x = "Irrigation Applied (inches)") +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        strip.text = element_text(size = 12, face = "bold"),
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5))
 ```
 
 ## Planning Colby 2026
