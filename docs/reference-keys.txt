@@ -8,6 +8,7 @@ fig:unnamed-chunk-7
 fig:unnamed-chunk-8
 tab:unnamed-chunk-9
 tab:unnamed-chunk-10
+welcome
 welcome-to-the-design-of-experiments-workshop
 overview
 some-review-of-math-and-notation
