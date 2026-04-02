@@ -1,14 +1,33 @@
 --- 
-title: "TAPS 2026 National Workshop"
+title: "TAPS 2026 National Workshop Notes"
 author: ""
-date: "`r Sys.Date()`"
+date: "2026-04-02"
 site: bookdown::bookdown_site
 ---
 
 # Welcome 
 
+## Morning 
+
+About the instructor, [Dr. Josefina Lacasa](https://jlacasa.github.io/). 
 
 Workshop notes and R code for Design of Experiments for the TAPS national workshop at Kansas State University on April 2, 2026.
 
+## Afternoon 
+
+About the instructor, [Dr. Trevor Hefley](https://sites.google.com/view/trevorhefleyresearch/home). 
+
 See Workshop notes and R code for Spatial and Time-series Analysis for the TAPS national workshop at Kansas State University on April 2, 2026 [here](https://019d4be5-1940-b4d4-bf2f-01c12b4cc2a8.share.connect.posit.cloud/index.html).
+
+## Acknowledgements 
+
+This Workshop wouldn't have been possible without the support from the [Kansas Water Institute](https://www.k-state.edu/engagement/innovation-and-partnerships/interdisciplinary-institutes/water-institute/) and the [Institute for Digital Ag and Advanced Analytics](https://www.k-state.edu/engagement/innovation-and-partnerships/interdisciplinary-institutes/digital-ag-advanced-analytics/).   
+
+```{r echo=FALSE, out.width= "35%", fig.align='center', fig.cap="Acknowledgements", fig.show='hold'}
+knitr::include_graphics("figures/kwi.png")
+
+knitr::include_graphics("figures/ID3A.png")
+
+```
+
 

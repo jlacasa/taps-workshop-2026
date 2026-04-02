@@ -15,7 +15,7 @@
 - Integrating new questions into TAPS experiments 
 
 
-::: {.callout-tip}
+::: {style="background-color: #e6f7ff; border: 1px solid #007bff; border-radius: 5px; padding: 15px;"}
 ### Some review of math and notation
 
 **On Notation:**
@@ -45,13 +45,13 @@ Typically we write $\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol\vare
 
 - Golden rules: replication, randomization, local control 
 
-```{r echo=FALSE, out.width= "60%", fig.align='center', fig.cap="Fisher's diagram 'The Principles of Field Experimentation'. Figure 1 in [Preece (1990)](https://doi.org/10.2307/2532438)"}
+```{r echo=FALSE, out.width= "60%", fig.align='center', fig.cap="Fisher's diagram 'The Principles of Field Experimentation'. Figure 1 in [Preece (1990)](https://doi.org/10.2307/2532438)."}
 knitr::include_graphics("figures/fisher_diagram.jpg")
 ```
 
 - And why do we need statistics to analyze our experiment results?  
-- History of designed experiments [[link](https://www.jstor.org/stable/48736885?seq=5)] 
-- History of statistics [[link](https://www.amazon.com/Lady-Tasting-Tea-Statistics-Revolutionized/dp/0805071342)] 
+- History of designed experiments. [[link](https://www.jstor.org/stable/48736885?seq=5)] 
+- History of statistics. [[link](https://www.amazon.com/Lady-Tasting-Tea-Statistics-Revolutionized/dp/0805071342)] 
 
 ## Precision, power, and inference 
 
@@ -68,18 +68,18 @@ The assumptions we make are
 
 A few properties arise as a consequence:
 
-- $\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $\boldsymbol{\beta}$
+- $\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $\boldsymbol{\beta}$.
 - $\hat{\boldsymbol{\beta}}$ is also the unbiased estimator with the smallest variance. 
-- Precision of the estimates: $Var(\hat{\boldsymbol{\beta}}) = \frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}$
-- Standard error of the estimates: $se(\hat{\boldsymbol{\beta}}) = \sqrt{\frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}}$
+- Precision of the estimates: $Var(\hat{\boldsymbol{\beta}}) = \frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}$.
+- Standard error of the estimates: $se(\hat{\boldsymbol{\beta}}) = \sqrt{\frac{\sigma^2}{\mathbf{X}^\top \mathbf{X}}}$. 
 - Also, looking directly at treatment means $\mu_j$: $se(\hat{\mu_j}) =\sqrt\frac{\sigma^2}{r}$, where $r$ is the number of repetitions. 
-- Variance of $\hat{y}$: $Var(\hat{y}) = \sigma^2 \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top$  
+- Variance of $\hat{y}$: $Var(\hat{y}) = \sigma^2 \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{X}^\top$. 
 - See 'Review' above to understand what $\mathbf{X}^\top \mathbf{X}$ does. 
 
 #### Inference 
 
 - What in the model were we interested about? 
-- A confidence interval of $\hat{\boldsymbol{\beta}}$: $CI_{95\%\ \hat{\boldsymbol{\beta}}} = \hat{\boldsymbol{\beta}} \pm t_{1-\alpha/2, df} \cdot se(\hat{\boldsymbol{\beta}})$ 
+- A confidence interval of $\hat{\boldsymbol{\beta}}$: $CI_{95\%\ \hat{\boldsymbol{\beta}}} = \hat{\boldsymbol{\beta}} \pm t_{1-\alpha/2, df} \cdot se(\hat{\boldsymbol{\beta}})$. 
 - What is the most accurate confidence interval? 
 - What is the best confidence interval?
 
@@ -193,6 +193,8 @@ Elements of ANOVA
 </body>
 
 
+\bigskip
+
 ```{r}
 #| echo: false
 
@@ -207,7 +209,11 @@ data_low_n <- data.frame(
 anova_baseline <- aov(value ~ treatment, data = data_low_n)
 knitr::kable(summary(anova_baseline)[[1]], 
              caption = "Baseline: Low #reps (3), Low #trts (3)")
+```
 
+\bigskip
+
+```{r echo=FALSE}
 set.seed(2)
 n <- 7
 groups <- c("A", "B", "C")
@@ -219,8 +225,11 @@ data_low_n <- data.frame(
 anova_baseline <- aov(value ~ treatment, data = data_low_n)
 knitr::kable(summary(anova_baseline)[[1]], 
              caption = "Baseline: More #reps (6), Low #trts (3)")
+```
 
+\bigskip
 
+```{r echo=FALSE}
 set.seed(88)
 n <- 3
 groups <- c("A", "B", "C", "D", "E", "F", "G")

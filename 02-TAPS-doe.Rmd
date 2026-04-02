@@ -52,7 +52,6 @@ knitr::kable(des_options,
 **Mathematically, we can infer a few points:**
 
 -   Recall that $se(\hat{\mu_j}) =\sqrt\frac{\sigma^2}{r}$.
--   Assume $\sigma^2 = 20$ and we get:
 
 ```{r}
 #| echo: false
@@ -82,18 +81,151 @@ Essentially,
 
 $$se(\hat\beta_j) = \sqrt{\sigma^2 (r\mathbf{X}_{teams}^\top \mathbf{X}_{teams} + \mathbf{X}_{extra}^\top \mathbf{X}_{extra})^{-1}}$$
 
-### Camparing designs side by side
+We can also consider different $\sigma^2$ for treatment versus extra. 
+
+$$se(\hat\beta_j) = \sqrt{(\frac{1}{\sigma^2_t} r\mathbf{X}_{teams}^\top \mathbf{X}_{teams} + \frac{1}{\sigma^2_{extra}} \mathbf{X}_{extra}^\top \mathbf{X}_{extra})^{-1}_{jj}}$$
+
+
+### Comparing designs side by side
+
 
 ```{r}
-# table
+#| echo: false
+#| message: false
+#| warning: false
+
+library(numDeriv)
+library(kableExtra)
+
+# 1. Setup Design Parameters
+sigma_teams <- 60
+sigma_extra <- 30
+beta_true <- c(150, 20, 15, -8, -10, 3) 
+
+# Simulate 24 random team decisions for N and Irr
+set.seed(42)
+n_teams <- 24
+
+# Var(Irr) = 5, Var(N) = 1000. 
+# Max possible covariance is sqrt(5 * 1000) = 70.7. 
+# We use 50 to simulate a strong positive correlation (r ~ 0.7)
+covar_irr_N <- 50 
+
+team_decisions <- mgcv::rmvn(n_teams, 
+                             mu = c(8, 190), # Means: Irr = 8, N = 190
+                             V = matrix(c(5, covar_irr_N, 
+                                          covar_irr_N, 1000),
+                                        nrow = 2, ncol = 2, byrow = TRUE))
+
+# Scale the raw agronomic decisions to [-1, 1] design space
+# This ensures mathematical compatibility with the CCD and assumed betas
+scale_to_design <- function(x) {
+  2 * ((x - min(x)) / (max(x) - min(x))) - 1
+}
+
+X_team_base <- cbind(
+  Intercept = 1,
+  N = scale_to_design(team_decisions[, 2]),  
+  Irr = scale_to_design(team_decisions[, 1]) 
+)
+
+# Add quadratic and interaction terms based on the scaled decisions
+X_team_base <- cbind(X_team_base, 
+                     N2 = X_team_base[,"N"]^2, 
+                     Irr2 = X_team_base[,"Irr"]^2, 
+                     N_Irr = X_team_base[,"N"] * X_team_base[,"Irr"])
+
+# 2. Setup the Central Composite Design (CCD) base
+ccd_N <- c(-1, 1, -1, 1, -1.414, 1.414, 0, 0, 0)
+ccd_Irr <- c(-1, -1, 1, 1, 0, 0, -1.414, 1.414, 0)
+
+X_ccd_base <- cbind(
+  Intercept = 1,
+  N = ccd_N,
+  Irr = ccd_Irr,
+  N2 = ccd_N^2,
+  Irr2 = ccd_Irr^2,
+  N_Irr = ccd_N * ccd_Irr
+)
+
+calc_optimum <- function(betas) {
+  b <- c(betas[2], betas[3]) 
+  B <- matrix(c(betas[4], 0.5 * betas[6],  
+                0.5 * betas[6], betas[5]), 
+              nrow = 2)
+  opt <- -0.5 * solve(B) %*% b
+  return(as.vector(opt))
+}
+
+# 3. Create a function to evaluate the variance of the designs
+evaluate_design <- function(reps, n_extra) {
+  X_teams <- do.call(rbind, replicate(reps, X_team_base, simplify = FALSE))
+  Info_teams <- crossprod(X_teams) / (sigma_teams^2)
+  
+  # Conditionally handle the extra plots to avoid breaking when n_extra = 0
+  if (n_extra > 0) {
+    reps_ccd <- ceiling(n_extra / nrow(X_ccd_base))
+    X_extra <- do.call(rbind, replicate(reps_ccd, X_ccd_base, simplify = FALSE))[1:n_extra, ]
+    Info_extra <- crossprod(X_extra) / (sigma_extra^2)
+  } else {
+    Info_extra <- matrix(0, nrow = ncol(X_team_base), ncol = ncol(X_team_base))
+  }
+  
+  se_team <- sigma_teams / sqrt(reps)
+  
+  var_betas <- solve(Info_teams + Info_extra)
+  se_betas <- sqrt(diag(var_betas))
+  
+  J <- numDeriv::jacobian(calc_optimum, beta_true)
+  var_opt <- J %*% var_betas %*% t(J)
+  se_opt <- sqrt(diag(var_opt))
+  
+  return(c(reps, n_extra, se_team, se_betas, se_opt))
+}
+
+# 4. Compile and transpose the results
+results <- rbind(
+  "Option 1" = evaluate_design(reps = 4, n_extra = 0),
+  "Option 2" = evaluate_design(reps = 4, n_extra = 12),
+  "Option 3" = evaluate_design(reps = 3, n_extra = 36),
+  "Option 4" = evaluate_design(reps = 2, n_extra = 60)
+)
+
+col_names <- c("# reps", "Extra plots", "SE(trt mean)", "SE(Intercept)", 
+               "SE(N)", "SE(Irr)", "SE(N^2)", "SE(Irr^2)", "SE(NxIrr)", 
+               "SE(OPT N)", "SE(OPT Irr)")
+
+colnames(results) <- col_names
+
+results <- results |>
+  as.data.frame() |> 
+  mutate(across(`SE(trt mean)`:`SE(OPT Irr)`, ~round(., 1)))
+
+knitr::kable(round(results, 3), 
+             col.names = col_names,
+             align = rep("c", 11),
+             caption = "Comprehensive Evaluation of Standard Errors Across Design Options")|>
+  kable_styling(latex_options = "scale_down", bootstrap_options = c("striped", "hover")) |>
+  scroll_box(width = "100%")
 ```
 
-```{r}
-#figures 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+results |> 
+  rownames_to_column("design") |>
+  pivot_longer(cols = c(`SE(trt mean)`:`SE(OPT Irr)`)) |> 
+  ggplot(aes(name, value))+
+  geom_point(aes(fill = factor(design)), shape =21, shape =3)+
+  theme_classic()+
+  labs(fill = "Design")+
+  scico::scale_fill_scico_d()+
+  theme(aspect.ratio = .4)
 ```
 
 ## Planning Colby 2026
 
-An applied scenario.
+An applied scenario & discussion. 
 
-[Get R code]().
+- How many repetitions?  
+- Should we combine competitions? 
+- Discuss tradeoffs on the whiteboard. 
